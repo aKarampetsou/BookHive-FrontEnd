@@ -1,12 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App'; // Το κύριο component της εφαρμογής 
-import { BrowserRouter } from 'react-router-dom';
-
-// Render της εφαρμογής μας στο HTML στοιχείο με id 'root'
-ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
-  document.getElementById('root')
-);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>BookHive</title>
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+</head>
+<body>
+  <!-- Το div με id "root" είναι το στοιχείο στο οποίο η React θα τοποθετήσει ολόκληρη την εφαρμογή -->
+  <div id="root"></div>
+  
+  <!-- Το αρχείο JavaScript της εφαρμογής -->
+  <script src="%PUBLIC_URL%/bundle.js"></script>
+  <!--bundle.js: Είναι το αρχείο JavaScript που παράγεται μετά το build της React εφαρμογής. Όλο το JavaScript της εφαρμογής "μαζεύεται"
+   (bundled) σε ένα αρχείο με την ονομασία bundle.js για να μπορεί να φορτωθεί πιο γρήγορα από το πρόγραμμα περιήγησης. 
+   Αυτό το αρχείο περιέχει όλο τον κώδικα JavaScript της εφαρμογής-->
+</body>
+</html>
