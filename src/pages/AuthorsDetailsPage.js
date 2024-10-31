@@ -28,3 +28,4 @@ function AuthorsDetailsPage() {
 }
 
 export default AuthorDetailPage;
+
