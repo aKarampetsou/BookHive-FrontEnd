@@ -1,0 +1,12 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App'; // Το κύριο component της εφαρμογής 
+import { BrowserRouter } from 'react-router-dom';
+
+// Render της εφαρμογής μας στο HTML στοιχείο με id 'root'
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById('root')
+);
