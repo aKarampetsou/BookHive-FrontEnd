@@ -27,5 +27,5 @@ function AuthorsDetailsPage() {
   );
 }
 
-export default AuthorDetailPage;
+export default AuthorsDetailsPage;
 

@@ -23,4 +23,4 @@ function BooksDetailsPage() {
   );
 }
 
-export default BookDetailPage;
+export default BooksDetailsPage;
