@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -19,50 +19,49 @@ function App() {
   return (
     /*AuthProvider: Εξασφαλίζει ότι τα δεδομένα του authentication (π.χ., αν ο χρήστης είναι συνδεδεμένος και το token)
      είναι διαθέσιμα σε κάθε μέρος της εφαρμογής που το χρειάζεται (component)*/
-    <AuthProvider> 
-      <Router>  {/* Router: Χρησιμοποιείται για να καθοδηγούμε την εφαρμογή στα σωστά components με βάση το URL */}
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          
-          {/* Προστατευμένες διαδρομές για συγγραφείς */}
-          <Route 
-            path="/authors" 
-            element={
-              <PrivateRoute> {/* */}
-                <AuthorsPage />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/authors/:id" 
-            element={
-              <PrivateRoute>
-                <AuthorsDetailsPage />
-              </PrivateRoute>
-            } 
-          />
-          
-          {/* Προστατευμένες διαδρομές για βιβλία */}
-          <Route 
-            path="/books" 
-            element={
-              <PrivateRoute>
-                <BooksPage />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/books/:id" 
-            element={
-              <PrivateRoute>
-                <BooksDetailsPage />
-              </PrivateRoute>
-            } 
-          />
-        </Routes>
-      </Router>
+    <AuthProvider>
+      {/* Αφαιρέθηκε το <Router> εδώ */}
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        
+        {/* Προστατευμένες διαδρομές για συγγραφείς */}
+        <Route 
+          path="/authors" 
+          element={
+            <PrivateRoute>
+              <AuthorsPage />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/authors/:id" 
+          element={
+            <PrivateRoute>
+              <AuthorsDetailsPage />
+            </PrivateRoute>
+          } 
+        />
+        
+        {/* Προστατευμένες διαδρομές για βιβλία */}
+        <Route 
+          path="/books" 
+          element={
+            <PrivateRoute>
+              <BooksPage />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/books/:id" 
+          element={
+            <PrivateRoute>
+              <BooksDetailsPage />
+            </PrivateRoute>
+          } 
+        />
+      </Routes>
     </AuthProvider>
   );
 }
