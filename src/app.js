@@ -5,8 +5,8 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import AuthorsPage from './pages/AuthorsPage';
 import BooksPage from './pages/BooksPage';
-import BookDetailPage from './pages/BookDetailPage';
-import AuthorDetailPage from './pages/AuthorDetailPage';
+import BooksDetailsPage from './pages/BooksDetailsPage';
+import AuthorsDetailsPage from './pages/AuthorsDetailsPage';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 
 // Το PrivateRoute είναι συνάρτηση που ελέγχει αν ο χρήστης είναι συνδεδεμένος ώστε να παρέχει προστασία για διαδρομές (routes) που απαιτούν σύνδεση
@@ -39,7 +39,7 @@ function App() {
             path="/authors/:id" 
             element={
               <PrivateRoute>
-                <AuthorDetailPage />
+                <AuthorsDetailsPage />
               </PrivateRoute>
             } 
           />
@@ -57,7 +57,7 @@ function App() {
             path="/books/:id" 
             element={
               <PrivateRoute>
-                <BookDetailPage />
+                <BooksDetailsPage />
               </PrivateRoute>
             } 
           />
