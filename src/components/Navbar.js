@@ -16,9 +16,8 @@ function Navbar() {
   return (
     <AppBar position="static"> {/* Το AppBar είναι ένα component του Material UI για τη μπάρα πλοήγησης*/}
       <Toolbar>
-        <Button color="inherit" component={Link} to="/">Home</Button> 
-        <Button color="inherit" component={Link} to="/authors">Authors</Button> 
-        {user && <Button color="inherit" component={Link} to="/books">Books</Button>} 
+        {user && <Button color="inherit" component={Link} to="/authors">Authors</Button>}
+        {user && <Button color="inherit" component={Link} to="/books">Books</Button>}
         {user ? (
           <Button color="inherit" onClick={handleLogout}>Logout</Button> // Εμφανίζει το κουμπί Logout αν ο χρήστης είναι συνδεδεμένος
         ) : (
