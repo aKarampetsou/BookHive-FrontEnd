@@ -1,31 +1,31 @@
 import React from 'react';
-import { AppBar, Toolbar, Button } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Button, AppBar, Toolbar, Typography } from '@mui/material';
 
 function Navbar() {
-  const { user, logout } = React.useContext(AuthContext); // Η logout είναι μια συνάρτηση που έχουμε ορίσει μέσα στο AuthContext και την καλούμε για να αποσυνδεθεί ο χρήστης
-  const navigate = useNavigate(); // χρ'ηση του useNavigate για redirect στο /login μετά το logout
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout(); // Αποσύνδεση χρήστη
-    navigate('/login'); // Ανακατεύθυνση στη σελίδα login
-  };
+  // Ελέγχει αν είναι στις σελίδες AuthorsPage ή BooksPage
+  const showBackButton = location.pathname === '/authors' || location.pathname === '/books';
 
-  
   return (
-    <AppBar position="static"> {/* Το AppBar είναι ένα component του Material UI για τη μπάρα πλοήγησης*/}
-      <Toolbar>
-        {user && <Button color="inherit" component={Link} to="/authors">Authors</Button>}
-        {user && <Button color="inherit" component={Link} to="/books">Books</Button>}
-        {user ? (
-          <Button color="inherit" onClick={handleLogout}>Logout</Button> // Εμφανίζει το κουμπί Logout αν ο χρήστης είναι συνδεδεμένος
-        ) : (
-          <Button color="inherit" component={Link} to="/login">Login</Button> // Εμφανίζει το κουμπί Login αν ο χρήστης δεν είναι συνδεδεμένος
+    <AppBar position="static">
+      <Toolbar style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Typography variant="h6">BookHive</Typography>
+        
+        {showBackButton && (
+          <Button
+            color="inherit"
+            onClick={() => navigate(-1)} // Πηγαίνει πίσω στην προηγούμενη σελίδα
+            style={{ marginRight: '1rem' }}
+          >
+            Back
+          </Button>
         )}
       </Toolbar>
     </AppBar>
   );
-  
 }
+
 export default Navbar;
