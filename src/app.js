@@ -2,30 +2,34 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
 import AuthorsPage from './pages/AuthorsPage';
 import BooksPage from './pages/BooksPage';
-import BooksDetailsPage from './pages/BooksDetailsPage';
-import AuthorsDetailsPage from './pages/AuthorsDetailsPage';
+import MainPage from './pages/MainPage'; // Κεντρική σελίδα μετά το login
 import { AuthProvider, AuthContext } from './context/AuthContext';
 
 // Το PrivateRoute είναι συνάρτηση που ελέγχει αν ο χρήστης είναι συνδεδεμένος ώστε να παρέχει προστασία για διαδρομές (routes) που απαιτούν σύνδεση
 function PrivateRoute({ children }) {
   const { user } = React.useContext(AuthContext); // Ελέγχουμε αν υπάρχει συνδεδεμένος χρήστης
-  return user ? children : <Navigate to="/login" />; // Ανακατεύθυνση στο login αν ο χρήστης δεν είναι συνδεδεμένος
+  return user ? children : <Navigate to="/" />; // Ανακατεύθυνση στην αρχική σελίδα αν ο χρήστης δεν είναι συνδεδεμένος
 }
 
 function App() {
   return (
-    /*AuthProvider: Εξασφαλίζει ότι τα δεδομένα του authentication (π.χ., αν ο χρήστης είναι συνδεδεμένος και το token)
-     είναι διαθέσιμα σε κάθε μέρος της εφαρμογής που το χρειάζεται (component)*/
     <AuthProvider>
-      {/* Αφαιρέθηκε το <Router> εδώ */}
       <Navbar />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        
+        <Route path="/" element={<HomePage />} /> {/* Αρχική σελίδα πριν το login */}
+
+        {/* Προστατευμένη διαδρομή για το MainPage (κεντρική σελίδα μετά το login) */}
+        <Route 
+          path="/main" 
+          element={
+            <PrivateRoute>
+              <MainPage />
+            </PrivateRoute>
+          } 
+        />
+
         {/* Προστατευμένες διαδρομές για συγγραφείς */}
         <Route 
           path="/authors" 
@@ -35,29 +39,13 @@ function App() {
             </PrivateRoute>
           } 
         />
-        <Route 
-          path="/authors/:id" 
-          element={
-            <PrivateRoute>
-              <AuthorsDetailsPage />
-            </PrivateRoute>
-          } 
-        />
-        
+
         {/* Προστατευμένες διαδρομές για βιβλία */}
         <Route 
           path="/books" 
           element={
             <PrivateRoute>
               <BooksPage />
-            </PrivateRoute>
-          } 
-        />
-        <Route 
-          path="/books/:id" 
-          element={
-            <PrivateRoute>
-              <BooksDetailsPage />
             </PrivateRoute>
           } 
         />
