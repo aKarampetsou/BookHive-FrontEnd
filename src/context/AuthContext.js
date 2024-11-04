@@ -1,13 +1,17 @@
-import React, { createContext, useState } from 'react';
-import axios from 'axios';
+import React, { createContext, useState, useEffect } from 'react';
 
-// Δημιουργία του Context για το Authentication
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Ο χρήστης αρχικοποιείται ως null
+  const [user, setUser] = useState(null);
 
-  // Συνάρτηση login
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
   const login = async (username, password) => {
     try {
       const response = await fetch('http://localhost:8080/auth/login', {
@@ -19,23 +23,22 @@ export const AuthProvider = ({ children }) => {
       });
   
       if (response.ok) {
-        setUser({ username }); // Αποθηκεύουμε μόνο το username του χρήστη
-        return true; // Επιτυχής σύνδεση
+        setUser({ username });
+        localStorage.setItem('user', JSON.stringify({ username }));
+        return true;
       } else {
         console.error('Login failed:', response.statusText);
-        return false; // Αποτυχία σύνδεσης
+        return false;
       }
     } catch (error) {
       console.error('Login error:', error);
-      return false; // Αποτυχία σύνδεσης
+      return false;
     }
   };
-  
 
-  // Συνάρτηση logout
   const logout = () => {
-    setUser(null); // Καθαρίζουμε τον χρήστη
-    localStorage.removeItem('token'); // Διαγράφουμε το token από το localStorage
+    setUser(null);
+    localStorage.removeItem('user');
   };
 
   return (
