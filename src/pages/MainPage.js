@@ -8,6 +8,7 @@ function MainPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <h2>Please select one of the options below</h2>
       
 
       {/* Εμφανίζουμε τα κουμπιά μόνο αν ο χρήστης είναι συνδεδεμένος */}
