@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Alert } from '@mui/material';
 
 function BooksPage() {
   const [books, setBooks] = useState([]);
@@ -7,6 +7,7 @@ function BooksPage() {
   const [updateOpen, setUpdateOpen] = useState(false); // Για το Update modal
   const [selectedBook, setSelectedBook] = useState(null); // Το βιβλίο για ενημέρωση
   const [newBook, setNewBook] = useState({ title: '', authorName: '', authorSurname: '', isbn: '' });
+  const [error, setError] = useState(null); // Κατάσταση για το μήνυμα σφάλματος
 
   useEffect(() => {
     fetchBooks();
@@ -19,6 +20,7 @@ function BooksPage() {
   };
 
   const handleAddBook = async () => {
+    setError(null); // Καθαρισμός προηγούμενου μηνύματος σφάλματος
     const response = await fetch('http://localhost:8080/api/books/addBookWithAuthor', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -28,6 +30,8 @@ function BooksPage() {
       fetchBooks(); // Ανανεώνουμε τα βιβλία
       setOpen(false); // Κλείνουμε το modal
       setNewBook({ title: '', authorName: '', authorSurname: '', isbn: '' }); // Επαναφέρουμε τη φόρμα
+    } else if (response.status === 409) { // Έλεγχος για σύγκρουση
+      setError("This book already exists in the database.");
     }
   };
 
@@ -56,6 +60,8 @@ function BooksPage() {
         <h1>Books List</h1>
         <Button variant="contained" color="primary" onClick={() => setOpen(true)}>Add Book</Button>
       </div>
+
+      {error && <Alert severity="error" style={{ marginBottom: '20px' }}>{error}</Alert>}
 
       <TableContainer component={Paper}>
         <Table aria-label="books table">
