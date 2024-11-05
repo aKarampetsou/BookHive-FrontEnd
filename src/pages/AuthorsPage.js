@@ -4,8 +4,8 @@ import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRo
 function AuthorsPage() {
   const [authors, setAuthors] = useState([]);
   const [open, setOpen] = useState(false);
-  const [newAuthor, setNewAuthor] = useState({ name: '', surname: '' });
-  const [editAuthor, setEditAuthor] = useState(null);
+  const [currentAuthor, setCurrentAuthor] = useState({ name: '', surname: '' }); // Χρησιμοποιείται για νέο ή υπάρχον συγγραφέα
+  const [editMode, setEditMode] = useState(false); // Για προσδιορισμό αν κάνουμε επεξεργασία ή προσθήκη
 
   useEffect(() => {
     fetchAuthors();
@@ -21,36 +21,26 @@ function AuthorsPage() {
     }
   };
 
-  const handleAddAuthor = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/authors', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newAuthor),
-      });
-      if (response.ok) {
-        fetchAuthors();
-        setNewAuthor({ name: '', surname: '' });
-        setOpen(false);
-      }
-    } catch (error) {
-      console.error('Error adding author:', error);
-    }
-  };
+  const handleSaveAuthor = async () => {
+    const url = editMode
+      ? `http://localhost:8080/api/authors/${currentAuthor.id}`
+      : 'http://localhost:8080/api/authors';
+    const method = editMode ? 'PUT' : 'POST';
 
-  const handleUpdateAuthor = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/authors/${editAuthor.id}`, {
-        method: 'PUT',
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editAuthor),
+        body: JSON.stringify(currentAuthor),
       });
       if (response.ok) {
         fetchAuthors();
-        setEditAuthor(null);
+        setOpen(false);
+        setCurrentAuthor({ name: '', surname: '' });
+        setEditMode(false);
       }
     } catch (error) {
-      console.error('Error updating author:', error);
+      console.error(`Error ${editMode ? 'updating' : 'adding'} author:`, error);
     }
   };
 
@@ -67,11 +57,17 @@ function AuthorsPage() {
     }
   };
 
+  const openModal = (author = { name: '', surname: '' }, isEdit = false) => {
+    setCurrentAuthor(author);
+    setEditMode(isEdit);
+    setOpen(true);
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h1>Authors List</h1>
-        <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
+        <Button variant="contained" color="primary" onClick={() => openModal()}>
           Add Author
         </Button>
       </div>
@@ -94,7 +90,7 @@ function AuthorsPage() {
                 <TableCell>{author.name}</TableCell>
                 <TableCell>{author.surname}</TableCell>
                 <TableCell>
-                  <Button variant="contained" color="success" onClick={() => setEditAuthor(author)}>
+                  <Button variant="contained" color="success" onClick={() => openModal(author, true)}>
                     Update
                   </Button>
                 </TableCell>
@@ -109,63 +105,34 @@ function AuthorsPage() {
         </Table>
       </TableContainer>
 
+      {/* Dialog για προσθήκη και ενημέρωση συγγραφέα */}
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Add New Author</DialogTitle>
+        <DialogTitle>{editMode ? 'Update Author' : 'Add New Author'}</DialogTitle>
         <DialogContent>
           <TextField
             label="Name"
             fullWidth
             margin="dense"
-            value={newAuthor.name}
-            onChange={(e) => setNewAuthor({ ...newAuthor, name: e.target.value })}
+            value={currentAuthor.name}
+            onChange={(e) => setCurrentAuthor({ ...currentAuthor, name: e.target.value })}
           />
           <TextField
             label="Surname"
             fullWidth
             margin="dense"
-            value={newAuthor.surname}
-            onChange={(e) => setNewAuthor({ ...newAuthor, surname: e.target.value })}
+            value={currentAuthor.surname}
+            onChange={(e) => setCurrentAuthor({ ...currentAuthor, surname: e.target.value })}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} color="secondary">
             Cancel
           </Button>
-          <Button onClick={handleAddAuthor} color="primary">
-            Add
+          <Button onClick={handleSaveAuthor} color="primary">
+            {editMode ? 'Update' : 'Add'}
           </Button>
         </DialogActions>
       </Dialog>
-
-      {editAuthor && (
-        <Dialog open={Boolean(editAuthor)} onClose={() => setEditAuthor(null)}>
-          <DialogTitle>Update Author</DialogTitle>
-          <DialogContent>
-            <TextField
-              label="Name"
-              fullWidth
-              margin="dense"
-              value={editAuthor.name}
-              onChange={(e) => setEditAuthor({ ...editAuthor, name: e.target.value })}
-            />
-            <TextField
-              label="Surname"
-              fullWidth
-              margin="dense"
-              value={editAuthor.surname}
-              onChange={(e) => setEditAuthor({ ...editAuthor, surname: e.target.value })}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setEditAuthor(null)} color="secondary">
-              Cancel
-            </Button>
-            <Button onClick={handleUpdateAuthor} color="primary">
-              Update
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
     </div>
   );
 }
