@@ -1,4 +1,3 @@
-// Navbar.js
 import React, { useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, AppBar, Toolbar, Typography } from '@mui/material';
