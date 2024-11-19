@@ -14,43 +14,91 @@ function BooksPage() {
   }, []);
 
   const fetchBooks = async () => {
-    const response = await fetch('http://localhost:8080/api/books');
-    const data = await response.json();
-    setBooks(data);
+    try {
+      const token = localStorage.getItem('token'); // Παίρνουμε το token από το localStorage
+      const response = await fetch('http://localhost:8080/api/books', {
+        headers: {
+          Authorization: `Bearer ${token}`, // Προσθέτουμε το token στην επικεφαλίδα
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setBooks(data);
+      } else {
+        console.error('Error fetching books:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching books:', error);
+    }
   };
 
   const handleAddBook = async () => {
-    setError(null); // Καθαρισμός προηγούμενου μηνύματος σφάλματος
-    const response = await fetch('http://localhost:8080/api/books/addBookWithAuthor', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newBook)
-    });
-    if (response.ok) {
-      fetchBooks(); // Ανανεώνουμε τα βιβλία
-      setOpen(false); // Κλείνουμε το modal
-      setNewBook({ title: '', authorName: '', authorSurname: '', isbn: '' }); // Επαναφέρουμε τη φόρμα
-    } else if (response.status === 409) { // Έλεγχος για σύγκρουση
-      setError("This book already exists in the database.");
+    setError(null);
+    try {
+      const token = localStorage.getItem('token'); // Παίρνουμε το token από το localStorage
+      const response = await fetch('http://localhost:8080/api/books/addBookWithAuthor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Προσθέτουμε το token στην επικεφαλίδα
+        },
+        body: JSON.stringify(newBook),
+      });
+      if (response.ok) {
+        fetchBooks();
+        setOpen(false);
+        setNewBook({ title: '', authorName: '', authorSurname: '', isbn: '' });
+      } else if (response.status === 409) {
+        setError("This book already exists in the database.");
+      } else {
+        setError('Failed to save book.');
+      }
+    } catch (error) {
+      console.error('Error adding book:', error);
+      setError('Something went wrong!');
     }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this book?')) {
-      await fetch(`http://localhost:8080/api/books/${id}`, { method: 'DELETE' });
-      fetchBooks();
+      try {
+        const token = localStorage.getItem('token'); // Παίρνουμε το token από το localStorage
+        const response = await fetch(`http://localhost:8080/api/books/${id}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`, // Προσθέτουμε το token στην επικεφαλίδα
+          },
+        });
+        if (response.ok) {
+          fetchBooks();
+        } else {
+          console.error('Error deleting book:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error deleting book:', error);
+      }
     }
   };
 
   const handleUpdateBook = async () => {
-    const response = await fetch(`http://localhost:8080/api/books/${selectedBook.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(selectedBook)
-    });
-    if (response.ok) {
-      fetchBooks(); // Ανανεώνουμε τα βιβλία
-      setUpdateOpen(false); // Κλείνουμε το modal
+    try {
+      const token = localStorage.getItem('token'); // Παίρνουμε το token από το localStorage
+      const response = await fetch(`http://localhost:8080/api/books/${selectedBook.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Προσθέτουμε το token στην επικεφαλίδα
+        },
+        body: JSON.stringify(selectedBook),
+      });
+      if (response.ok) {
+        fetchBooks();
+        setUpdateOpen(false);
+      } else {
+        console.error('Error updating book:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating book:', error);
     }
   };
 
@@ -94,7 +142,6 @@ function BooksPage() {
         </Table>
       </TableContainer>
 
-      {/* Add Book Modal */}
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Add New Book</DialogTitle>
         <DialogContent>
@@ -109,7 +156,6 @@ function BooksPage() {
         </DialogActions>
       </Dialog>
 
-      {/* Update Book Modal */}
       <Dialog open={updateOpen} onClose={() => setUpdateOpen(false)}>
         <DialogTitle>Update Book</DialogTitle>
         <DialogContent>
