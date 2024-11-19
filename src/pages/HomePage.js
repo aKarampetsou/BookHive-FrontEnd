@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Button, Modal, TextField, Box, Typography } from '@mui/material';
-import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,7 +19,7 @@ function HomePage() {
     const success = await login(username, password);
     if (success) {
       handleClose();
-      navigate('/main'); // Redirect στο MainPage μετά το login
+      navigate('/main');
     } else {
       setError(true);
     }
@@ -29,12 +28,9 @@ function HomePage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
       <h1>Welcome to the BookHive App!</h1>
-
       <Button variant="contained" color="primary" onClick={handleOpen} style={{ marginTop: '2rem', fontSize: '1.5rem', padding: '1rem 2rem' }}>
         Login
       </Button>
-
-      {/* Modal για τη φόρμα Login */}
       <Modal open={open} onClose={handleClose}>
         <Box
           component="form"
