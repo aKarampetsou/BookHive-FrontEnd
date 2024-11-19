@@ -6,9 +6,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const token = localStorage.getItem('token');
+    if (token) {
+      setUser({ token });
     }
   }, []);
 
@@ -21,24 +21,25 @@ export const AuthProvider = ({ children }) => {
         },
         body: JSON.stringify({ username, password }),
       });
-  
+
       if (response.ok) {
-        setUser({ username });
-        localStorage.setItem('user', JSON.stringify({ username }));
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        setUser({ token: data.token });
         return true;
       } else {
-        console.error('Login failed:', response.statusText);
+        console.error('Invalid credentials');
         return false;
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login failed:', error);
       return false;
     }
   };
 
   const logout = () => {
+    localStorage.removeItem('token');
     setUser(null);
-    localStorage.removeItem('user');
   };
 
   return (
